@@ -20,12 +20,12 @@
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <th scope="col">1</th>
-            <td>VMW002</td>
-            <td>Vmware</td>
-            <td>...</td>
-            <td>2021-02-01 15:00</td>
+          <tr v-for="collector in listCollectors" :key="collector.id">
+            <th scope="col">{{ collector.id }}</th>
+            <td>{{ collector.title }}</td>
+            <td>{{ collector.category }}</td>
+            <td>{{ collector.colParams }}</td>
+            <td>{{ collector.creation_date }}</td>
             <td>1.0</td>
             <td>
               <button class="btn-sm btn-outline-danger mx-2"><b-icon-x-circle-fill/> Remove</button>
@@ -42,7 +42,18 @@
 
 <script>
 export default {
-  name: "Collector"
+  name: "Collector",
+  inject: ['config','$axios'],
+  data() {
+    return {
+      listCollectors: []
+    }
+  },
+  mounted() {
+    this.$axios.get(this.config.SERVER_URL+'api/collector/list')
+        .then(response => {this.listCollectors = response.data})
+        .catch(error => console.log(error));
+  }
 }
 </script>
 

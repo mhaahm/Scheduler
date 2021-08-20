@@ -1,5 +1,6 @@
 import {Entity,Column,PrimaryGeneratedColumn,} from "typeorm";
 
+@Entity()
 export class Collector {
 
     @PrimaryGeneratedColumn()
@@ -12,14 +13,14 @@ export class Collector {
     script: string;
 
     @Column("text")
-    desciption: string
+    description: string
 
     @Column()
     category: number;
 
-    @Column()
-    $colParams: Array<object>
+    @Column("json")
+    colParams: any;
 
-    @Column()
-    optional: boolean;
+    @Column("datetime")
+    creation_date: string;
 }

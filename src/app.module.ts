@@ -4,15 +4,22 @@ import { Module } from '@nestjs/common';
 import { ServeStaticModule} from '@nestjs/serve-static';
 import { CollectorController } from './Collector/collector.controller';
 import {TypeOrmModule} from "@nestjs/typeorm";
+import config from "ormconfig";
+import {CollectorService} from "./Collector/collector.service";
+import {Collector} from "./entity/Collector.entity";
+
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({ // New
       rootPath: __dirname+'/..'+'/client/dist', // New
     }),
-    TypeOrmModule.forRoot()
+    TypeOrmModule.forRoot(config),
+      TypeOrmModule.forFeature([Collector])
   ],
   controllers: [ CollectorController],
-  providers: [],
+  providers: [CollectorService],
 })
-export class AppModule {}
+export class AppModule {
+
+}

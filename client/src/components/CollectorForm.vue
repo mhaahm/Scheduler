@@ -1,5 +1,8 @@
 <template>
-  <div class="container bg-secondary bg-primary mt-2">
+  <div class="container bg-secondary bg-primary pt-2 pb-2">
+    <div class="alert alert-success" role="alert" v-show="saveSuccess == 1">
+      Save Collector done successfully
+    </div>
     <div class="row">
       <div class="col-md-6 mb-3">
         <label for="collectorTitle" class="form-label">Collector Title</label>
@@ -43,7 +46,7 @@
           </tr>
           </thead>
           <tbody>
-          <collector-param v-model:value="collector.ColParams"></collector-param>
+          <collector-param v-model:value="collector.colParams"></collector-param>
 
           </tbody>
         </table>
@@ -86,7 +89,7 @@ export default {
   data() {
     return {
       collector: {
-        ColParams: [
+        colParams: [
           {name: 'client', prefix: '', description: '', optional: false}
         ]
       }

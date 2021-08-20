@@ -1,9 +1,9 @@
 export class CreateCollectorDto
 {
-    readonly ColParams: Array<object>;
-    readonly optional:boolean;
+    readonly colParams: Array<object>;
     readonly title: string;
     readonly script:string;
     readonly description: string;
     readonly category: number;
+    creation_date: string = (new Date()).toString();
 }
