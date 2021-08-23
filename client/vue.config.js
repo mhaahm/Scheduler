@@ -1,7 +1,5 @@
+const path = require("path");
+
 module.exports = {
-    configureWebpack: {
-        devServer: {
-            headers: { "Access-Control-Allow-Origin": "*" }
-        }
-    }
+    outputDir: path.resolve(__dirname, "../dist/client"),
 };

@@ -9,7 +9,12 @@ const routes = [
         component: Collector
     },
     {
-        path: '/editCollector',
+        path: '/newCollector',
+        name: 'newCollector',
+        component: CollectorForm
+    },
+    {
+        path: '/editCollector/:id',
         name: 'editCollector',
         component: CollectorForm
     }

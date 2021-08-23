@@ -1,4 +1,5 @@
-import {Entity,Column,PrimaryGeneratedColumn,} from "typeorm";
+import {Entity,Column,PrimaryGeneratedColumn,Index,ManyToOne} from "typeorm";
+import {Category} from "./Category.entity";
 
 @Entity()
 export class Collector {
@@ -7,6 +8,7 @@ export class Collector {
     id: number;
 
     @Column()
+    @Index({unique: true})
     title:string;
 
     @Column("text")
@@ -15,12 +17,12 @@ export class Collector {
     @Column("text")
     description: string
 
-    @Column()
-    category: number;
-
     @Column("json")
     colParams: any;
 
     @Column("datetime")
     creation_date: string;
+
+    @ManyToOne(() => Category, category => category.collectors)
+    category: Category;
 }
