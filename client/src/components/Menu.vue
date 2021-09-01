@@ -3,20 +3,23 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
         <div class="mx-2"><img src="https://img.icons8.com/office/40/000000/overtime.png"/></div>
-        <router-link to="/Collector" class="navbar-brand" active-class="active">Collector</router-link>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+          <ul class="navbar-nav me-auto mt-2">
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="#">Collections</a>
+              <router-link to="/Collector" class="navbar-brand" active-class="active">Collector</router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Crontab</a>
+              <router-link to="/Collection/list" class="navbar-brand" active-class="active">Collections</router-link>
+            </li>
+            <li class="nav-item">
+              <a class="navbar-brand" href="#">Crontab</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a class="navbar-brand dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Settings
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">

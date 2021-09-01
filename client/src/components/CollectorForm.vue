@@ -4,17 +4,18 @@
       {{ textSave }}
     </div>
     <div class="row">
-      <div class="col-md-6 mb-3">
+      <div class="col-md-4 mb-3">
         <label for="collectorTitle" class="form-label">Collector Title</label>
         <input type="text" class="form-control" id="collectorTitle" placeholder="Collector Title"
-                 v-model="collector.title" :class="{ error: v$.collector.title.$errors.length }">
+               v-model="collector.title" :class="{ error: v$.collector.title.$errors.length }">
         <div class="input-errors" v-for="error of v$.collector.title.$errors" :key="error.$uid">
           <div class="error-msg">{{ error.$message }}</div>
         </div>
       </div>
-      <div class="col-md-6 mb-3" >
+      <div class="col-md-4 mb-3">
         <label for="collectorCateg" class="form-label">Collector Category</label>
-        <select id="collectorCateg" class="form-control" v-model="collector.category" :class="{ error: v$.collector.category.$errors.length }">
+        <select id="collectorCateg" class="form-control" v-model="collector.category"
+                :class="{ error: v$.collector.category.$errors.length }">
           <option value="0">Select Category</option>
           <option v-for="categ in categories" :key="categ.id" :value="categ.id">{{ categ.name }}</option>
         </select>
@@ -22,11 +23,22 @@
           <div class="error-msg">{{ error.$message }}</div>
         </div>
       </div>
+      <div class="col-md-4 mb-3">
+        <label for="collectorType" class="form-label">Collector Type</label>
+        <select id="collectorType" class="form-control" v-model="collector.collectorType"
+                :class="{ error: v$.collector.collectorType.$errors.length }">
+          <option value="0">Select Collector Type</option>
+          <option v-for="col in collectorTypes" :key="col.id" :value="col.id">{{ col.name }}</option>
+        </select>
+        <div class="input-errors" v-for="error of v$.collector.collectorType.$errors" :key="error.$uid">
+          <div class="error-msg">{{ error.$message }}</div>
+        </div>
+      </div>
     </div>
     <div class="row">
-      <div class="col-md-12 mb-3" >
-        <label class="form-label" for="collectorscript">Collector scripts</label>
-        <textarea class="form-control" id="collectorscript" placeholder="scripts"
+      <div class="col-md-12 mb-3">
+        <label class="form-label">Collector scripts</label>
+        <textarea class="form-control" id="collectorscript" placeholder="scripts" rows="8"
                   v-model="collector.script" :class="{ error: v$.collector.script.$errors.length }"> </textarea>
         <div class="input-errors" v-for="error of v$.collector.script.$errors" :key="error.$uid">
           <div class="error-msg">{{ error.$message }}</div>
@@ -57,7 +69,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(param,index) in collector.colParams" v-bind:key="index" >
+          <tr v-for="(param,index) in collector.colParams" v-bind:key="index">
             <td><input type="text" class="form-control" v-model="param.name"></td>
             <td><input type="text" class="form-control" v-model="param.prefix"></td>
             <td><input type="checkbox" class="form-check-input" v-model="param.optional"></td>
@@ -93,53 +105,52 @@
 
 <script>
 import useVuelidate from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
+import {required} from '@vuelidate/validators'
 
 export default {
-  setup () {
-    return { v$: useVuelidate() }
+  setup() {
+    return {v$: useVuelidate()}
   },
   name: "CollectorForm",
-  components: {
-  },
-  inject: ['config','$axios'],
+  components: {},
+  inject: ['config', '$axios'],
   methods: {
-     saveParam() {
-       this.v$.collector.$touch()
-       if(this.v$.$error) {
-         this.saveDone = true;
-         this.textSave = 'Save Collector not launched because some '
-         this.error = true
-         return;
-       }
+    saveParam() {
+      this.v$.collector.$touch()
+      if (this.v$.$error) {
+        this.saveDone = true;
+        this.textSave = 'Save Collector not launched because some '
+        this.error = true
+        return;
+      }
       this.$axios({
         method: 'post',
-        url: this.config.SERVER_URL+'api/collector/create',
+        url: this.config.SERVER_URL + 'api/collector/create',
         data: this.collector
       }).then(() => {
-          this.saveDone = true;
-          this.textSave = 'Save Collector done successfully'
-          this.error = false
+        this.saveDone = true;
+        this.textSave = 'Save Collector done successfully'
+        this.error = false
         setTimeout(() => {
           this.saveDone = false;
           this.$router.push('/Collector')
-        },3000)
-      }).catch( (error) => {
+        }, 3000)
+      }).catch((error) => {
         this.saveDone = true;
-        this.textSave = 'Save Collector done with error ==> Error detail: '+error
+        this.textSave = 'Save Collector done with error ==> Error detail: ' + error
         this.error = true
         setTimeout(() => {
           this.saveDone = false
-        },3000)
+        }, 3000)
       });
-       window.scrollTo(0,0);
+      window.scrollTo(0, 0);
     },
     addParam() {
-      this.collector.colParams.push( {name: '', prefix: '', description: '', optional: false})
+      this.collector.colParams.push({name: '', prefix: '', description: '', optional: false})
     },
     removeParam(index) {
-      if(this.collector.colParams.length > 1) {
-        this.collector.colParams.splice(index,index)
+      if (this.collector.colParams.length > 1) {
+        this.collector.colParams.splice(index, index)
       }
     },
     goBack() {
@@ -152,6 +163,7 @@ export default {
         title: '',
         description: '',
         category: '',
+        collectorType: '',
         script: '',
         colParams: [
           {name: '', prefix: '', description: '', optional: false}
@@ -160,28 +172,30 @@ export default {
       saveDone: false,
       textSave: '',
       error: false,
-      categories: []
+      categories: [],
+      collectorTypes: []
     }
   },
-  validations () {
+  validations() {
     return {
       collector: {
-        title: {required,$autoDirty:true},
-        script: {required,$autoDirty: true},
+        title: {required, $autoDirty: true},
+        script: {required, $autoDirty: true},
         category: {required},
-        description: {required,$autoDirty: true},
+        collectorType: {required},
+        description: {required, $autoDirty: true},
       }
     }
   },
   mounted() {
     let collector_id = this.$route.params.id;
-    if(typeof collector_id !== 'undefined') {
-      this.$axios.get(this.config.SERVER_URL+'api/collector/getCollector?id='+collector_id)
+    if (typeof collector_id !== 'undefined') {
+      this.$axios.get(this.config.SERVER_URL + 'api/collector/getCollector?id=' + collector_id)
           .then(response => {
             this.collector = response.data;
+            this.collector.category = this.collector.category.id;
             var result = [];
-            for(var i in this.collector.colParams)
-            {
+            for (var i in this.collector.colParams) {
               result.push(this.collector.colParams[i]);
             }
             this.collector.colParams = result;
@@ -189,8 +203,14 @@ export default {
           }).catch(error => console.log(error));
     }
     // get categorys
-    this.$axios.get(this.config.SERVER_URL+'api/category/list')
-        .then(response => {this.categories = response.data})
+    this.$axios.get(this.config.SERVER_URL + 'api/category/list').then(response => {
+          this.categories = response.data
+    }).catch(error => console.log(error));
+
+    this.$axios.get(this.config.SERVER_URL + 'api/collector/collectorListType')
+        .then(response => {
+          this.collectorTypes = response.data
+        })
         .catch(error => console.log(error));
   }
 }

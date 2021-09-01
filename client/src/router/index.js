@@ -1,6 +1,8 @@
 import {createWebHistory, createRouter} from "vue-router";
 import Collector from "../components/Collector";
 import CollectorForm from "../components/CollectorForm";
+import Collection from "../components/Collection";
+import CollectionList from "../components/CollectionList";
 
 const routes = [
     {
@@ -17,6 +19,21 @@ const routes = [
         path: '/editCollector/:id',
         name: 'editCollector',
         component: CollectorForm
+    },{
+        path: '/editCollection/:id',
+        name: 'editCollection',
+        component: Collection,
+        props:true
+    },
+    {
+        path: '/collection/new',
+        name: 'newCollection',
+        component: Collection
+    },
+    {
+        path: '/collection/list',
+        name: 'collectionList',
+        component: CollectionList
     }
 ]
 

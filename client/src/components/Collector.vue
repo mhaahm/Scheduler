@@ -24,7 +24,7 @@
             <th scope="col">{{ collector.id }}</th>
             <td>{{ collector.title }}</td>
             <td>{{ collector.category.name }}</td>
-            <td>{{ collector.colParams }}</td>
+            <td style="max-width: 450px;"><pre><code>{{ collector.colParams }}</code></pre></td>
             <td>{{ collector.creation_date }}</td>
             <td>1.0</td>
             <td>

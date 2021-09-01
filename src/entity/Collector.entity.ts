@@ -1,28 +1,36 @@
-import {Entity,Column,PrimaryGeneratedColumn,Index,ManyToOne} from "typeorm";
-import {Category} from "./Category.entity";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Index,
+  ManyToOne,
+} from 'typeorm';
+import { Category } from './Category.entity';
 
 @Entity()
 export class Collector {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column()
+  @Index({ unique: true })
+  title: string;
 
-    @Column()
-    @Index({unique: true})
-    title:string;
+  @Column('text')
+  script: string;
 
-    @Column("text")
-    script: string;
+  @Column('text')
+  description: string;
 
-    @Column("text")
-    description: string
+  @Column('json')
+  colParams: any;
 
-    @Column("json")
-    colParams: any;
+  @Column('datetime')
+  creation_date: string;
 
-    @Column("datetime")
-    creation_date: string;
+  @ManyToOne(() => Category, (category) => category.collectors)
+  category: Category;
 
-    @ManyToOne(() => Category, category => category.collectors)
-    category: Category;
+  @Column()
+  collectorType: number;
 }

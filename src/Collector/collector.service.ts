@@ -1,50 +1,53 @@
-import {Injectable} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
-import {Collector} from "../entity/Collector.entity";
-import {DeleteResult, Repository, UpdateResult} from "typeorm";
-import {CreateCollectorDto} from "./CreateCollectorDto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Collector } from '../entity/Collector.entity';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { CreateCollectorDto } from './CreateCollectorDto';
 
 @Injectable()
-export class CollectorService
-{
-    constructor(@InjectRepository(Collector) private collectorRepository: Repository<Collector>) {
+export class CollectorService {
+  constructor(
+    @InjectRepository(Collector)
+    private collectorRepository: Repository<Collector>,
+  ) {}
+  saveUser(
+    createCollectorDto: CreateCollectorDto,
+  ): Promise<Collector | UpdateResult> {
+    try {
+      createCollectorDto.creation_date = new Date().toString();
+      if (createCollectorDto.id) {
+        return this.collectorRepository.update(
+          createCollectorDto.id,
+          createCollectorDto,
+        );
+      } else {
+        const collector = this.collectorRepository.create(createCollectorDto);
+        return this.collectorRepository.save(collector);
+      }
+    } catch (e) {
+      throw e;
     }
-    saveUser(createCollectorDto: CreateCollectorDto): Promise<Collector|UpdateResult>
-    {
-        try {
+  }
 
-            createCollectorDto.creation_date = (new Date()).toString();
-            if(createCollectorDto.id) {
-                return this.collectorRepository.update(createCollectorDto.id,createCollectorDto);
-            } else {
-                const collector = this.collectorRepository.create(createCollectorDto);
-                return this.collectorRepository.save(collector);
-            }
+  async getAllCollector() {
+    return await this.collectorRepository.find({ relations: ['category'] });
+  }
 
-        } catch (e) {
-            throw e;
-        }
-    }
+  /**
+   *
+   * @param id
+   */
+  async getSingleCollector(id: string): Promise<Collector> {
+    return await this.collectorRepository.findOneOrFail(id, {
+      relations: ['category'],
+    });
+  }
 
-    async getAllCollector() {
-        return await this.collectorRepository.find({relations: ['category']});
-    }
-
-    /**
-     *
-     * @param id
-     */
-    async getSingleCollector(id: string): Promise<Collector>
-    {
-        return await this.collectorRepository.findOneOrFail(id);
-    }
-
-    /**
-     *
-     * @param id
-     */
-    async removeCollector(id: number): Promise<DeleteResult>
-    {
-        return await this.collectorRepository.delete(id);
-    }
+  /**
+   *
+   * @param id
+   */
+  async removeCollector(id: number): Promise<DeleteResult> {
+    return await this.collectorRepository.delete(id);
+  }
 }

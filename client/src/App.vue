@@ -1,7 +1,7 @@
 <template>
   <div>
     <Menu msg="Welcome to Your Vue.js App"/>
-    <router-view class="m-2"></router-view>
+    <router-view class="m-2" :key="$route.path"></router-view>
   </div>
 
 </template>
