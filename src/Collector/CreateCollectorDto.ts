@@ -9,4 +9,5 @@ export class CreateCollectorDto {
   readonly category: Category;
   readonly collectorType: number;
   creation_date: string = new Date().toString();
+  readonly isStandardOutData: boolean;
 }

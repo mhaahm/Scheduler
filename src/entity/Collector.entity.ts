@@ -33,4 +33,7 @@ export class Collector {
 
   @Column()
   collectorType: number;
+
+  @Column()
+  isStandardOutData: boolean;
 }

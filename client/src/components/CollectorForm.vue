@@ -12,7 +12,7 @@
           <div class="error-msg">{{ error.$message }}</div>
         </div>
       </div>
-      <div class="col-md-4 mb-3">
+      <div class="col-md-3 mb-3">
         <label for="collectorCateg" class="form-label">Collector Category</label>
         <select id="collectorCateg" class="form-control" v-model="collector.category"
                 :class="{ error: v$.collector.category.$errors.length }">
@@ -23,7 +23,7 @@
           <div class="error-msg">{{ error.$message }}</div>
         </div>
       </div>
-      <div class="col-md-4 mb-3">
+      <div class="col-md-3 mb-3">
         <label for="collectorType" class="form-label">Collector Type</label>
         <select id="collectorType" class="form-control" v-model="collector.collectorType"
                 :class="{ error: v$.collector.collectorType.$errors.length }">
@@ -33,6 +33,10 @@
         <div class="input-errors" v-for="error of v$.collector.collectorType.$errors" :key="error.$uid">
           <div class="error-msg">{{ error.$message }}</div>
         </div>
+      </div>
+      <div class="col-md-2 mt-5">
+        <label for="isStandardOutData" class="form-label">Ouput Standard Result</label>
+        <input type="checkbox" v-model="collector.isStandardOutData" id="isStandardOutData" class="mb-3">
       </div>
     </div>
     <div class="row">
@@ -167,7 +171,8 @@ export default {
         script: '',
         colParams: [
           {name: '', prefix: '', description: '', optional: false}
-        ]
+        ],
+        isStandardOutData: false
       },
       saveDone: false,
       textSave: '',

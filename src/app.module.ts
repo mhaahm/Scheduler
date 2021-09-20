@@ -16,6 +16,7 @@ import { DefaultDataService } from './Commands/DefaultData.service';
 import { TransfertMod } from './entity/TransfertMod.entity';
 import { Collection } from './entity/Collection.entity';
 import { CollectionController } from './collections/collection.controller';
+import { CollectionLauncher } from './Commands/CollectionLauncher';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { CollectionController } from './collections/collection.controller';
     CollectorService,
     CategoryService,
     DefaultDataService,
+    CollectionLauncher,
   ],
 })
 export class AppModule {}

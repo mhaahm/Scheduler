@@ -83,7 +83,7 @@ export default {
         this.$router.push('/editCollection/'+id);
     },
     launchCollection(id) {
-
+        console.log(id)
     }
   }
 };

@@ -5,9 +5,14 @@ import * as path from 'path';
 
 export default class SchedulerLoger extends Logger implements LoggerService {
   readonly fileLog: string;
-  constructor() {
+  constructor(logParam?: string) {
     super();
-    this.fileLog = globalConfig.logFile;
+    if (logParam) {
+      this.fileLog = logParam;
+      console.log(this.fileLog);
+    } else {
+      this.fileLog = globalConfig.logFile;
+    }
     mkdirSync(path.dirname(this.fileLog), { recursive: true });
   }
   debug(message: any, context?: string): any {
