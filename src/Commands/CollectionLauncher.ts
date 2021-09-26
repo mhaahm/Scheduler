@@ -154,7 +154,7 @@ export class CollectionLauncher {
                                   this.collection.collector.title
                                 } collection file
                                 Launched on date ${Helpers.getDateString()}`;
-        Helpers.sendMail(files, messageContent);
+        Helpers.sendMail(files);
         break;
       case 'FTP':
         break;

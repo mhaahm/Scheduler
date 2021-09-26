@@ -3,30 +3,41 @@ import globalConfig from '../../globalConfig';
 import * as nodemailer from 'nodemailer';
 
 // async..await is not allowed in global scope, must use a wrapper
-const sendMail = async (files?: string[], content?: string) => {
+const sendMail = (files?: string[], content?: string) => {
   // create reusable transporter object using the default SMTP transport
   const transporter = nodemailer.createTransport({
     host: globalConfig.mail.host,
     port: globalConfig.mail.port,
-    secure: true,
+    secure: false,
     auth: globalConfig.mail.auth,
   });
 
   // send mail with defined transport object
   const attachements = [];
   for (const file in files) {
-    attachements.push({ path: file });
+    attachements.push({ path: files[file] });
   }
-  const info = await transporter.sendMail({
-    from: globalConfig.mail.from,
-    to: globalConfig.mail.collectionSender,
-    subject: globalConfig.mail.subjectCollect,
-    html: content,
-    attachments: attachements,
-  });
 
-  console.log('Message sent: %s', info.messageId);
-  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  const info = transporter.sendMail(
+    {
+      from: globalConfig.mail.collectionSender,
+      to: globalConfig.mail.collectionMail,
+      subject: globalConfig.mail.subjectCollect,
+      html: content,
+      text: content,
+      attachments: attachements,
+    },
+    function (err, info) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(info);
+      }
+    },
+  );
+  console.log('après');
+ // console.log('Message sent: %s', info.messageId);
+  //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 };
 
 const getDateString = function () {
