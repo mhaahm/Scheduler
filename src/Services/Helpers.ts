@@ -1,9 +1,13 @@
 import { Collection } from '../entity/Collection.entity';
 import globalConfig from '../../globalConfig';
 import * as nodemailer from 'nodemailer';
+import * as request from 'request';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as archiver from 'archiver';
 
 // async..await is not allowed in global scope, must use a wrapper
-const sendMail = (files?: string[], content?: string) => {
+const sendMail = async (files?: string[], content?: string) => {
   // create reusable transporter object using the default SMTP transport
   const transporter = nodemailer.createTransport({
     host: globalConfig.mail.host,
@@ -17,8 +21,14 @@ const sendMail = (files?: string[], content?: string) => {
   for (const file in files) {
     attachements.push({ path: files[file] });
   }
-
-  const info = transporter.sendMail(
+  transporter.verify(function (error, success) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Server is ready to take our messages');
+    }
+  });
+  const info = await transporter.sendMail(
     {
       from: globalConfig.mail.collectionSender,
       to: globalConfig.mail.collectionMail,
@@ -35,9 +45,7 @@ const sendMail = (files?: string[], content?: string) => {
       }
     },
   );
-  console.log('après');
- // console.log('Message sent: %s', info.messageId);
-  //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  return info;
 };
 
 const getDateString = function () {
@@ -62,12 +70,48 @@ const createDataFileName = (collection: Collection) => {
   }.data`;
 };
 
+const sendFileToServer = async function (filename) {
+  const target =
+    globalConfig.sslServerUrl + 'upload/' + path.basename(filename);
+  const rs = fs.createReadStream(filename);
+  const ws = await request.post(target);
+  ws.on('drain', function () {
+    rs.resume();
+  });
+  await rs.pipe(ws);
+};
+
+/**
+ * @param {String} source
+ * @param {String} out
+ * @returns {Promise}
+ */
+const zipDirectory = async function (source, out) {
+  const archive = archiver('zip', { zlib: { level: 9 } });
+  const stream = fs.createWriteStream(out);
+  await archive.directory(source, false).pipe(stream);
+  await archive.finalize();
+};
+
+const createZipFileName = (collection: Collection) => {
+  return `Collection_${getDateString()}_${collection.title}_${
+    collection.collector.title
+  }.zip`;
+};
+
 export default {
   getDateString,
+  createZipFileName,
   createDataFileName,
   sendMail,
+  sendFileToServer,
+  zipDirectory,
   buildDataFile(collection: Collection) {
     const date = getDateString();
     return `Collection_Logs_${date}_${collection.collector.title}.data`;
+  },
+  buildTempDir() {
+    const date = getDateString();
+    return `Temp_${date}`;
   },
 };

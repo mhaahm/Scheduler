@@ -13,7 +13,6 @@
             <th scope="col">#</th>
             <th scope="col">Title</th>
             <th scope="col">Category</th>
-            <th scope="col">Params</th>
             <th scope="col">Creation date</th>
             <th scope="col">Version</th>
             <th scope="col">Actions</th>
@@ -24,7 +23,6 @@
             <th scope="col">{{ collector.id }}</th>
             <td>{{ collector.title }}</td>
             <td>{{ collector.category.name }}</td>
-            <td style="max-width: 450px;"><pre><code>{{ collector.colParams }}</code></pre></td>
             <td>{{ collector.creation_date }}</td>
             <td>1.0</td>
             <td>

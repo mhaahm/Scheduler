@@ -21,6 +21,9 @@ const globalConfig: any = {
     collectionSender: 'webmaster@k-and-decide.com',
     subjectCollect: 'New Collection Result'
   },
+  sslFileDepot: 'D:/Temp/Schedulers/',
+  sslServerUrl: 'http://localhost:3000/',
+  SERVER_URL: 'http://localhost:9000/',
 };
 if (!fs.existsSync(globalConfig.tempDir)) {
   fs.mkdirSync(globalConfig.tempDir, { recursive: true });

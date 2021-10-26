@@ -10,6 +10,7 @@ import SchedulerLoger from '../Services/SchedulerLoger';
 import { appendFileSync, existsSync, mkdirSync } from 'fs';
 import * as helper from '../Services/Helpers';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as runner from 'child_process';
 import Helpers from '../Services/Helpers';
 
@@ -20,6 +21,7 @@ export class CollectionLauncher {
   private logger: SchedulerLoger;
   private dirlog: string;
   private dirData: string;
+  private zipData: string;
 
   constructor(
     @InjectRepository(Collection)
@@ -32,6 +34,10 @@ export class CollectionLauncher {
     this.dirData = globalConfig.tempDir + 'CollectionData/';
     if (!existsSync(this.dirData)) {
       mkdirSync(this.dirData, { recursive: true });
+    }
+    this.zipData = globalConfig.tempDir + 'ZipData/';
+    if (!existsSync(this.zipData)) {
+      mkdirSync(this.zipData, { recursive: true });
     }
   }
 
@@ -85,8 +91,7 @@ export class CollectionLauncher {
     const ps = runner.execSync(launcher);
     fs.writeSync(out, ps.toString());
     // send file per mail or per ssl
-    this.sendCollectionFile([dataFile, logFile]);
-    //Helpers.main();
+    await this.sendCollectionFile([dataFile, logFile]);
   }
 
   /**
@@ -143,22 +148,43 @@ export class CollectionLauncher {
     }
   }
 
-  sendCollectionFile(files: string[]) {
+  async sendCollectionFile(files: string[]) {
     const transfertMod = this.collection.transfertMode.name;
-
+    // compress files
+    const dirGlobal = this.zipData + Helpers.buildTempDir() + '/';
+    if (!existsSync(dirGlobal)) {
+      mkdirSync(dirGlobal, { recursive: true });
+    }
+    for (const index in files) {
+      const file = files[index];
+      const base = path.basename(file);
+      fs.renameSync(file, dirGlobal + base);
+    }
+    const zipName = this.zipData + Helpers.createZipFileName(this.collection);
+    await Helpers.zipDirectory(dirGlobal, zipName);
+    // send file switch sended type
     switch (transfertMod) {
       case 'EMAIL':
-        _cli.info('Send collection file per mail');
+        _cli.info('Send collection file by mail');
         const messageContent = `Hello              
                                 Attached is the ${
                                   this.collection.collector.title
                                 } collection file
                                 Launched on date ${Helpers.getDateString()}`;
-        Helpers.sendMail(files);
+        Helpers.sendMail([zipName], messageContent)
+          .then((res) => {
+            _cli.success('Send mail files done successfully');
+          })
+          .catch((reson) => {
+            console.log(reson);
+            _cli.error('Error send files ');
+          });
         break;
       case 'FTP':
         break;
       case 'SSL':
+        _cli.info('Send collection file by ssl server');
+        await Helpers.sendFileToServer(zipName);
         break;
     }
   }

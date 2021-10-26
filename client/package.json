@@ -16,6 +16,8 @@
     "bootstrap-icons-vue": "^0.7.0",
     "core-js": "^3.6.5",
     "sass": "^1.37.5",
+    "socket.io-client": "^4.3.2",
+    "socketio": "^1.0.0",
     "vee-validate": "^4.4.9",
     "vue": "^3.0.0",
     "vue-axios": "^3.2.5",

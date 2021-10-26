@@ -18,7 +18,8 @@ if (!checkFileExistsSync('./dist/src/app.module.js')) { // CHANGE THE FILE TO CH
   return process.exit();
 }
 
-const app_1 = require('./dist/src/app.module'); // CHANGE THE IMPORT IF NEEDED
+const app_1 = require('./dist/src/app.module');
+const { _cli } = require("@squareboat/nest-console"); // CHANGE THE IMPORT IF NEEDED
 
 async function bootstrap() {
   const app = await core_1.NestFactory.createApplicationContext(
@@ -37,8 +38,17 @@ async function bootstrap() {
     console_1.Logger.error(` ${argv.command} : command not found `);
     return process.exit();
   }
-  await console_1.CommandRunner.handle(command, argv);
-  return process.exit();
+  try {
+    await console_1.CommandRunner.handle(command, argv);
+    _cli.success(`Command ${argv.command} done successffuly`)
+    await app.close();
+
+  } catch (e) {
+    _cli.error('Error in execution of command '+argv.command+'\n Details : '+e.toString());
+    process.exit(e.code.toString());
+  }
+
 }
 bootstrap();
+
 //# sourceMappingURL=cli.js.map

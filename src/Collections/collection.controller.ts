@@ -5,8 +5,8 @@ import {
   Body,
   Get,
   Delete,
-  Param,
-} from '@nestjs/common';
+  Param, HttpStatus
+} from "@nestjs/common";
 import { CreateCollectionDto } from './CreateCollectionDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,6 +14,7 @@ import { Collection } from '../entity/Collection.entity';
 import { Response } from 'express';
 import SchedulerLoger from '../Services/SchedulerLoger';
 import { TransfertMod } from '../entity/TransfertMod.entity';
+import { CollectionProduces } from '../Services/collection.producer.service';
 
 @Controller('collection')
 export class CollectionController {
@@ -23,6 +24,7 @@ export class CollectionController {
     private collectionRepository: Repository<Collection>,
     @InjectRepository(TransfertMod)
     private transfertModRepository: Repository<TransfertMod>,
+    private readonly collectionProducer: CollectionProduces,
   ) {}
 
   @Post('/addNew')
@@ -30,7 +32,6 @@ export class CollectionController {
     @Body() collectionDto: CreateCollectionDto,
     @Res() res: Response,
   ) {
-
     const collection = this.collectionRepository.create(collectionDto);
     if (collection.id) {
       this.logger.log('Update collection');
@@ -88,8 +89,13 @@ export class CollectionController {
     return await this.collectionRepository.delete(id);
   }
 
-  @Get('/launchCollection')
-  launchCollection(@Param('id') id: string) {
-    
+  @Get('/launchCollection/:id')
+  launchCollection(@Param('id') id: string, @Res() res: Response) {
+    try {
+      this.collectionProducer.addJobToLaunch(parseInt(id));
+      return res.status(HttpStatus.OK).json(['Success']);
+    } catch (e) {
+      return res.status(HttpStatus.NOT_MODIFIED).json([e.toString()]);
+    }
   }
 }

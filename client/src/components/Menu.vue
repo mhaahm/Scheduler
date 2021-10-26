@@ -2,7 +2,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
-        <div class="mx-2"><img src="https://img.icons8.com/office/40/000000/overtime.png"/></div>
+        <div class="mx-2"><img src="/imgs/overtime.png"/></div>
          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>

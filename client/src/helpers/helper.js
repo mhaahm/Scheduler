@@ -10,6 +10,7 @@ export function getData(url, params) {
     .then(response => {
       success(response);
     }).catch(error => {
+      console.log(error)
     params.swal.fire({
       title: "<strong>Server error</strong>",
       icon: "error",

@@ -13,7 +13,6 @@
             <th scope="col">#</th>
             <th scope="col">Title</th>
             <th scope="col">Collector</th>
-            <th scope="col">Params</th>
             <th scope="col">Actions</th>
           </tr>
           </thead>
@@ -22,11 +21,10 @@
             <td>{{  collection.id }}</td>
             <td>{{  collection.title }}</td>
             <td>{{  collection.collector.title }}</td>
-            <td style="max-width: 450px;"><pre>{{  collection.params }}</pre></td>
             <td>
               <button class="btn-sm btn-outline-danger mx-2" @click="removeCollection(collection.id)"><b-icon-x-circle-fill/> Remove</button>
               <button class="btn-sm btn-outline-info mx-2" @click="editCollection(collection.id)" ><b-icon-pencil-square/> Edit</button>
-              <button class="btn-sm btn-outline-success mx-2"  ><b-icon-skip-forward-circle/> Execute</button>
+              <button class="btn-sm btn-outline-success mx-2" @click="runCollecte(collection.id)" ><b-icon-skip-forward-circle/> Execute</button>
               <button class="btn-sm btn-outline-warning"  ><b-icon-calendar3/> Schedule</button>
 
             </td>
@@ -36,18 +34,37 @@
       </div>
 
     </div>
+    <div class="row p-2">
+      <div class="console">
+        <p style="color: white;" v-html="collectionLog"></p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { deleteData, getData } from "../helpers/helper";
-
+import { deleteData, getData, getUrl } from "../helpers/helper";
+import io from 'socket.io-client';
 export default {
   name: "CollectionList",
   inject: ['config','$axios'],
+
+  created() {
+    this.socket = io(getUrl(), { transports: ['websocket', 'polling', 'flashsocket'] });
+    this.socket.on('EVENT_NAME', (message) => {
+      this.collectionLog+= '<br> >> '+message.msg;
+      var container = this.$el.querySelector(".console");
+      container.scrollTop = container.scrollHeight;
+    })
+  },
+  components: {
+
+  },
   data() {
     return {
-      collections: []
+      collections: [],
+      socket: null,
+      collectionLog: ' >> '
     }
   },
   mounted() {
@@ -57,6 +74,7 @@ export default {
       },
       swal: this.$swal
     });
+
   },
   methods: {
     removeCollection(col_id) {
@@ -77,18 +95,33 @@ export default {
             })
         }
       })
-
     },
     editCollection(id) {
         this.$router.push('/editCollection/'+id);
     },
-    launchCollection(id) {
-        console.log(id)
+    runCollecte(id) {
+      // launch an action to server
+      //console.log(id)
+      getData('api/collection/launchCollection/'+id,{
+        success: () => {
+
+        },
+        swal: this.$swal
+      });
     }
   }
 };
 </script>
 
 <style scoped>
-
+.console {
+  background-color: black;
+  width: 99%;
+  margin: auto;
+  max-height: 400px;
+  border-radius: 5px;
+  padding: 19px;
+  text-align: start;
+  overflow-y: auto;
+}
 </style>
