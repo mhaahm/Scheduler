@@ -9,13 +9,15 @@ import VueAxios from 'vue-axios';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import Popper from "vue3-popper";
-
+import Oruga from '@oruga-ui/oruga-next'
+import '@oruga-ui/oruga-next/dist/oruga.css'
 const vm = createApp(App)
 
 vm.use(route)
 vm.use(VueAxios, axios)
 vm.use(BootstrapIconsPlugin)
 vm.use(VueSweetalert2)
+vm.use(Oruga)
 vm.provide('$axios',axios)
 vm.component("Popper", Popper);
 var config = {

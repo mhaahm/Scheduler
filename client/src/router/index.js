@@ -3,6 +3,7 @@ import Collector from "../components/Collector";
 import CollectorForm from "../components/CollectorForm";
 import Collection from "../components/Collection";
 import CollectionList from "../components/CollectionList";
+import crontablist from "../components/crontablist";
 
 const routes = [
     {
@@ -34,6 +35,11 @@ const routes = [
         path: '/collection/list',
         name: 'collectionList',
         component: CollectionList
+    },
+    {
+        path: '/crontab/list',
+        name: 'crontab_list',
+        component: crontablist
     }
 ]
 

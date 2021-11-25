@@ -2,7 +2,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
-        <div class="mx-2"><img src="/imgs/overtime.png"/></div>
+        <div class="mx-2"></div>
          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -16,7 +16,7 @@
               <router-link to="/Collection/list" class="navbar-brand" active-class="active">Collections</router-link>
             </li>
             <li class="nav-item">
-              <a class="navbar-brand" href="#">Crontab</a>
+              <router-link to="/crontab/list" class="navbar-brand" active-class="active">Crontab</router-link>
             </li>
             <li class="nav-item dropdown">
               <a class="navbar-brand dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

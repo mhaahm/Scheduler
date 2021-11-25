@@ -22,6 +22,9 @@ import { CollectionProduces } from './Services/collection.producer.service';
 import { CollectionConsumer } from './Services/collection.consumer';
 import { SocketModule } from './socket/socket.module';
 import { AppGateway } from './app.gateway';
+import { ScheduleModule } from '@nestjs/schedule';
+import { Crontab } from './entity/Crontab.entity';
+import { CrontabService } from './Services/crontab.service';
 
 @Module({
   imports: [
@@ -30,7 +33,13 @@ import { AppGateway } from './app.gateway';
       rootPath: join(__dirname, '..', 'client'), // New
     }),
     TypeOrmModule.forRoot(config),
-    TypeOrmModule.forFeature([Collector, Category, Collection, TransfertMod]),
+    TypeOrmModule.forFeature([
+      Collector,
+      Category,
+      Collection,
+      TransfertMod,
+      Crontab,
+    ]),
     ConsoleModule,
     BullModule.forRoot({
       redis: {
@@ -38,6 +47,7 @@ import { AppGateway } from './app.gateway';
         port: 6379,
       },
     }),
+    ScheduleModule.forRoot(),
     BullModule.registerQueue({
       name: 'collectionQue',
     }),
@@ -58,6 +68,7 @@ import { AppGateway } from './app.gateway';
     CollectionProduces,
     CollectionConsumer,
     AppGateway,
+    CrontabService,
   ],
 })
 export class AppModule {

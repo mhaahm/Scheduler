@@ -47,3 +47,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Migration command
+```bash
+node --require ts-node/register ./node_modules/typeorm/cli.js "migration:generate" -n "ChangeCrontabMultiCollecte"
+```

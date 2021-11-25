@@ -35,6 +35,8 @@
       </div>
 
     </div>
+
+
   </div>
 </template>
 
@@ -42,6 +44,7 @@
 export default {
   name: "Collector",
   inject: ['config','$axios'],
+
   data() {
     return {
       listCollectors: []

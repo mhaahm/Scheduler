@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="row p-2">
-      <div class="col-md-2">
-        <router-link class="btn btn-success" to="/collection/new"><b-icon-plus-circle-fill class="mb-1 mx-1"/>New Collection</router-link>
+      <div class="col-md-3">
+        <router-link class="btn btn-outline-success" to="/collection/new"><b-icon-plus-circle-fill class="mb-1 mx-1"/>New Collection</router-link>
+        <button class="btn btn-outline-warning mx-2" to="/collection/new" @click="scheduleMultiple()"><b-icon-plus-circle-fill class="mb-1 mx-1"/>Multiple schedule</button>
       </div>
     </div>
     <div class="row p-2">
@@ -11,6 +12,7 @@
           <thead>
           <tr>
             <th scope="col">#</th>
+            <th scope="col"><input type="checkbox" @change="selectAllCollect($event)"/> </th>
             <th scope="col">Title</th>
             <th scope="col">Collector</th>
             <th scope="col">Actions</th>
@@ -19,20 +21,20 @@
           <tbody>
           <tr v-for="collection in collections" :key="collection.id">
             <td>{{  collection.id }}</td>
+            <td><input type="checkbox" v-model="selectedCollects" :id="'coll_'+collection.id" :value="collection.id"/> </td>
             <td>{{  collection.title }}</td>
             <td>{{  collection.collector.title }}</td>
             <td>
               <button class="btn-sm btn-outline-danger mx-2" @click="removeCollection(collection.id)"><b-icon-x-circle-fill/> Remove</button>
               <button class="btn-sm btn-outline-info mx-2" @click="editCollection(collection.id)" ><b-icon-pencil-square/> Edit</button>
               <button class="btn-sm btn-outline-success mx-2" @click="runCollecte(collection.id)" ><b-icon-skip-forward-circle/> Execute</button>
-              <button class="btn-sm btn-outline-warning"  ><b-icon-calendar3/> Schedule</button>
+              <button class="btn-sm btn-outline-warning" @click="scheduleCollection(collection)" ><b-icon-calendar3/> Schedule</button>
 
             </td>
           </tr>
           </tbody>
         </table>
       </div>
-
     </div>
     <div class="row p-2">
       <div class="console">
@@ -45,6 +47,8 @@
 <script>
 import { deleteData, getData, getUrl } from "../helpers/helper";
 import io from 'socket.io-client';
+import crontab from "./crontab";
+
 export default {
   name: "CollectionList",
   inject: ['config','$axios'],
@@ -64,7 +68,18 @@ export default {
     return {
       collections: [],
       socket: null,
-      collectionLog: ' >> '
+      collectionLog: ' >> ',
+      showModalSizeLarge: false,
+      crontab : {
+        minute: '',
+        hour: '',
+        day_month: '',
+        month: '',
+        day_week: '',
+        title: '',
+        jobid: ''
+      },
+      selectedCollects: []
     }
   },
   mounted() {
@@ -108,6 +123,38 @@ export default {
         },
         swal: this.$swal
       });
+    },
+    scheduleCollection(collection) {
+      this.$oruga.modal.open({
+        parent: this,
+        component: crontab,
+        custom: true,
+        trapFocus: true,
+        props: {crontab: this.crontab}
+      })
+      this.crontab.title = collection.title;
+      this.crontab.jobsid = this.selectedCollects;
+    },
+
+    selectAllCollect(event)
+    {
+      this.selectedCollects = [];
+      if(event.target.checked) {
+          for( let i = 0; i<this.collections.length;i++) {
+            this.selectedCollects.push(this.collections[i].id);
+          }
+      }
+    },
+    scheduleMultiple() {
+      this.$oruga.modal.open({
+        parent: this,
+        component: crontab,
+        custom: true,
+        trapFocus: true,
+        props: {crontab: this.crontab}
+      })
+      this.crontab.jobsid = this.selectedCollects;
+      this.crontab.title = 'Multiple jobs';
     }
   }
 };

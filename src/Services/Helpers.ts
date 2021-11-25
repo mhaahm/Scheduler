@@ -5,6 +5,9 @@ import * as request from 'request';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as archiver from 'archiver';
+import * as http from 'http';
+import * as url from 'url';
+import { curly } from 'node-libcurl';
 
 // async..await is not allowed in global scope, must use a wrapper
 const sendMail = async (files?: string[], content?: string) => {
@@ -63,6 +66,26 @@ const getDateString = function () {
   return d_string;
 };
 
+const checkUrlExists = function (Url, callback) {
+  console.log('validation url');
+  const options = {
+    method: 'HEAD',
+    host: 'localhost',
+    port: url.parse(Url).port,
+    path: url.parse(Url).pathname,
+  };
+  console.log(options);
+  try {
+    const req = http.request(options, function (r) {
+      console.log(r);
+      callback(r.statusCode == 200);
+    });
+    req.end();
+  } catch (e) {
+    console.log('end ');
+  }
+};
+
 const createDataFileName = (collection: Collection) => {
   // To-do update this treatment to add parameter in database
   return `Collection_${getDateString()}_${collection.title}_${
@@ -71,14 +94,25 @@ const createDataFileName = (collection: Collection) => {
 };
 
 const sendFileToServer = async function (filename) {
-  const target =
-    globalConfig.sslServerUrl + 'upload/' + path.basename(filename);
-  const rs = fs.createReadStream(filename);
-  const ws = await request.post(target);
-  ws.on('drain', function () {
-    rs.resume();
-  });
-  await rs.pipe(ws);
+  const { statusCode, data, headers } = await curly.get(
+    globalConfig.sslServerUrl,
+  );
+  if (!statusCode) {
+    console.log('Send collecte file to ssl server ');
+    return;
+  }
+  try {
+    const target =
+      globalConfig.sslServerUrl + 'upload/' + path.basename(filename);
+    const rs = fs.createReadStream(filename);
+    const ws = await request.post(target);
+    ws.on('drain', function () {
+      rs.resume();
+    });
+    await rs.pipe(ws);
+  } catch (e) {
+    console.log('Error send file : server is not responding');
+  }
 };
 
 /**
