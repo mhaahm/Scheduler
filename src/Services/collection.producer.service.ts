@@ -4,13 +4,13 @@ import { Queue } from 'bull';
 
 @Injectable()
 export class CollectionProduces {
-  constructor(@InjectQueue('collectionQue') private queue: Queue) {}
+  constructor(@InjectQueue('collectionQue') private queue: Queue) { }
 
   /**
    * @param collectionId
    */
   async addJobToLaunch(collectionId: number) {
-    console.log('Collection id '+collectionId);
+    console.log('Collection id ' + collectionId);
     await this.queue.add('collection-launcher',{
       jobId: collectionId
     });

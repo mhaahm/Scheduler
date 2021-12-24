@@ -1,9 +1,9 @@
-import { Logger, LoggerService } from '@nestjs/common';
+import { ConsoleLogger, LoggerService } from '@nestjs/common';
 import globalConfig from '../../globalConfig';
 import { writeFileSync, mkdirSync } from 'fs';
 import * as path from 'path';
 
-export default class SchedulerLoger extends Logger implements LoggerService {
+export default class SchedulerLoger extends ConsoleLogger implements LoggerService {
   readonly fileLog: string;
   constructor(logParam?: string) {
     super();

@@ -36,9 +36,9 @@
         </table>
       </div>
     </div>
-    <div class="row p-2">
-      <div class="console">
-        <p style="color: white;" v-html="collectionLog"></p>
+    <div class="row p-3">
+      <div class="alert alert-info console">
+        <p v-html="collectionLog"></p>
       </div>
     </div>
   </div>
@@ -77,6 +77,7 @@ export default {
         month: '',
         day_week: '',
         title: '',
+        free_config: '',
         jobid: ''
       },
       selectedCollects: []
@@ -89,7 +90,6 @@ export default {
       },
       swal: this.$swal
     });
-
   },
   methods: {
     removeCollection(col_id) {
@@ -146,6 +146,15 @@ export default {
       }
     },
     scheduleMultiple() {
+       if (this.selectedCollects.length == 0) {
+        this.$swal.fire({
+          title: "<strong>Multiple schedule error</strong>",
+          icon: "error",
+          html: 'You must select one or more collections',
+          showCloseButton: true,
+        });
+        return;
+      }
       this.$oruga.modal.open({
         parent: this,
         component: crontab,
@@ -162,13 +171,13 @@ export default {
 
 <style scoped>
 .console {
-  background-color: black;
-  width: 99%;
+  /*background-color: black;
+  width: 99%;*/
   margin: auto;
   max-height: 400px;
-  border-radius: 5px;
+  /*border-radius: 5px;
   padding: 19px;
-  text-align: start;
+  text-align: start;*/
   overflow-y: auto;
 }
 </style>

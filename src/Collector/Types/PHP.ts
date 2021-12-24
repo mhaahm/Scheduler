@@ -11,7 +11,16 @@ export class PHP extends CollectorType implements CollectorTypeInterface {
   createLauncherFile(params): string {
     const file = this.createScriptFile();
     const launcherFile = this.dir + '/Launcher_' + Math.ceil(Math.random() * 100000) + '.bat';
-    fs.writeFileSync(launcherFile, `@Echo Off \n php ${file} ${params}`);
+    fs.writeFileSync(launcherFile, 
+      `@echo off \n 
+        php ${file} ${params} 
+        If %errorlevel% NEQ 0 (
+          echo "collection done with error"
+        ) else (
+          echo "collection done success "
+        )
+        exit %errorlevel%
+    `);
     return launcherFile;
   }
 

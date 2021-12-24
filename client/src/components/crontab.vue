@@ -39,33 +39,39 @@
           <div class="col-4">
             <label for="month" class="form-label">Month</label>
             <select class="form-control" id="month" v-model="cron.month">
-              <option value="January">January</option>
-              <option value="February">February</option>
-              <option value="March">March</option>
-              <option value="April">April</option>
-              <option value="May">May</option>
-              <option value="June">June</option>
-              <option value="July">July</option>
-              <option value="August">August</option>
-              <option value="September">September</option>
-              <option value="October">October</option>
-              <option value="November">November</option>
-              <option value="December">December</option>
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
               <option value="*">Every Month</option>
             </select>
           </div>
           <div class="col-4">
             <label for="day_week" class="form-label">Day of week</label>
             <select class="form-control" id="day_week" v-model="cron.day_week">
-              <option value="Mon">Monday</option>
-              <option value="Tus">Tuesday</option>
-              <option value="Wed">Wednesday</option>
-              <option value="Thur">Thursday</option>
-              <option value="Fri">Friday</option>
-              <option value="Sat">Saturday</option>
-              <option value="Sun">Sunday</option>
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <option value="5">Saturday</option>
+              <option value="6">Sunday</option>
               <option value="*">Every Day Of Week</option>
             </select>
+          </div>
+        </div>
+        <div class="row">
+           <div class="col-6">
+            <label for="day_week" class="form-label">Advanced Crontab Config for more details show <a href="http://crontab.org/" target="_blank">crontab.org</a> </label>
+            <input type="text" class="form-control" v-model="cron.free_config">
           </div>
         </div>
       </section>
@@ -93,10 +99,10 @@ export default {
     saveCrontab(closeFunc) {
 
       if (this.cron.title == '' ||
-        this.cron.minute == '' ||
+        ((this.cron.minute == '' ||
         this.cron.hour == '' ||
         this.cron.month == '' ||
-        this.cron.day_week == '') {
+        this.cron.day_week == '') && this.cron.free_config == '') ) {
         this.$swal.fire({
           title: "<strong>Save error</strong>",
           icon: "error",

@@ -4,8 +4,14 @@ import CollectorForm from "../components/CollectorForm";
 import Collection from "../components/Collection";
 import CollectionList from "../components/CollectionList";
 import crontablist from "../components/crontablist";
+import home from "../components/Home";
 
 const routes = [
+    {
+        path: '/',
+        name: 'home',
+        component: home 
+    },
     {
         path: '/Collector',
         name: 'collector',

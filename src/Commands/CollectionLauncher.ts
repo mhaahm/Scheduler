@@ -88,10 +88,15 @@ export class CollectionLauncher {
     );
     _cli.info(`The data file name : ${dataFile}`);
     this.logger.log(`The data file name : ${dataFile}`);
-    const ps = runner.execSync(launcher);
-    fs.writeSync(out, ps.toString());
-    // send file per mail or per ssl
-    await this.sendCollectionFile([dataFile, logFile]);
+    try {
+      const ps = runner.execSync(launcher);
+      fs.writeSync(out, ps.toString());
+      // send file per mail or per ssl
+      await this.sendCollectionFile([dataFile, logFile]);
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   /**
@@ -101,7 +106,6 @@ export class CollectionLauncher {
    */
   buildCollectionParams(dataFile: string): string {
     let paramStr = '';
-    const paramsDef = this.collection.collector.colParams;
     const paramsValue = this.collection.params;
     for (const param of paramsValue) {
       if (param.value == '' && !param.optional) {
@@ -167,9 +171,8 @@ export class CollectionLauncher {
       case 'EMAIL':
         _cli.info('Send collection file by mail');
         const messageContent = `Hello              
-                                Attached is the ${
-                                  this.collection.collector.title
-                                } collection file
+                                Attached is the ${this.collection.collector.title
+          } collection file
                                 Launched on date ${Helpers.getDateString()}`;
         Helpers.sendMail([zipName], messageContent)
           .then((res) => {

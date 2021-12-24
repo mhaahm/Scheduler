@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Crontab } from '../entity/Crontab.entity';
 import { Collection } from '../entity/Collection.entity';
+import { CollectionProduces } from './collection.producer.service';
 
 @Injectable()
 export class CrontabService {
@@ -17,14 +18,8 @@ export class CrontabService {
     private crontabRepository: Repository<Crontab>,
     @InjectRepository(Collection)
     private collectionRepository: Repository<Collection>,
-  ) {
-    /*const name = 'Test';
-    const job = new CronJob(`01 * * * * *`, () => {
-      this.logger.warn(`time (01) for job ${name} to run!`);
-    });
-    this.scheduleregistry.addCronJob(name, job);
-    job.start();*/
-  }
+    private readonly collectionProducer: CollectionProduces,
+  ) {}
 
   /**
    *
@@ -50,6 +45,7 @@ export class CrontabService {
       day_month: params.day_month,
       month: params.month,
       day_week: params.day_week,
+      free_config: params.free_config,
     };
     crontab.collections = [];
     for (let i = 0; i < params.jobsid.length; i++) {
@@ -70,6 +66,7 @@ export class CrontabService {
       } else {
         await this.crontabRepository.save(cron);
       }
+      this.enableCronsJobs();
       return true;
     } catch (e) {
       console.log('Error save crontab ', e);
@@ -77,5 +74,24 @@ export class CrontabService {
     }
   }
 
-  enableCronsJobs() {}
+  async enableCronsJobs() {
+    // get all crontabs
+    // for each crontab job create crontab instance
+    const crontabs = await this.crontabRepository.find();
+    //console.log(crontabs);
+    crontabs.forEach((crontab) => {
+      const collectionId = crontab.id;
+      const name = crontab.name;
+      const config = crontab.config;
+      let cron_config = `00 ${config.minute} ${config.hour} ${config.day_month} ${config.month} ${config.day_week}`;
+      if (config.free_config != '') {
+        cron_config = config.free_config;
+      }
+      const job = new CronJob(cron_config, () => {
+        this.collectionProducer.addJobToLaunch(collectionId);
+      });
+      this.scheduleregistry.addCronJob(name, job);
+      job.start();
+    });
+  }
 }

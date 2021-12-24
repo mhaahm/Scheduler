@@ -20,6 +20,7 @@ import { CollectionProduces } from '../Services/collection.producer.service';
 import { Request } from 'express';
 import { CrontabService } from '../Services/crontab.service';
 import { Crontab } from '../entity/Crontab.entity';
+import { JobsService } from 'src/Services/jobs.services';
 
 @Controller('collection')
 export class CollectionController {
@@ -31,6 +32,7 @@ export class CollectionController {
     private transfertModRepository: Repository<TransfertMod>,
     private readonly collectionProducer: CollectionProduces,
     private readonly crontabService: CrontabService,
+    private readonly jobsService: JobsService,
     @InjectRepository(Crontab) private crontabRepository: Repository<Crontab>,
   ) {}
 
@@ -83,6 +85,7 @@ export class CollectionController {
 
   @Get('/list')
   async getAllCollection() {
+    this.crontabService.enableCronsJobs();
     return await this.collectionRepository.find({ relations: ['collector'] });
   }
 
@@ -123,6 +126,15 @@ export class CollectionController {
     return await this.crontabRepository.delete(id);
   }
 
+  /**
+   *
+   *
+   * @param {string} id
+   * @param {Response} res
+   * @returns
+   *
+   * @memberOf CollectionController
+   */
   @Get('/launchcrontab/:id')
   async launchcrontab(@Param('id') id: string, @Res() res: Response) {
     const crontab = await this.crontabRepository.findOne(id, {
@@ -130,11 +142,19 @@ export class CollectionController {
     });
     try {
       for (const job in crontab.collections) {
-         await this.collectionProducer.addJobToLaunch(crontab.collections[job].id);
+        await this.collectionProducer.addJobToLaunch(
+          crontab.collections[job].id,
+        );
       }
       return res.status(HttpStatus.OK).json(['Success']);
     } catch (e) {
       return res.status(HttpStatus.NOT_MODIFIED).json([e.toString()]);
     }
+  }
+
+  @Get('/jobs')
+  async getJobs(@Res() res: Response) {
+     const jobs = await this.jobsService.getAllQueueJobs();
+     return res.status(HttpStatus.OK).json(jobs);
   }
 }
