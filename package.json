@@ -34,6 +34,8 @@
     "@nestjs/typeorm": "^8.0.2",
     "@nestjs/websockets": "^8.2.4",
     "@squareboat/nest-console": "0.0.7",
+    "ansi-to-html": "^0.7.2",
+    "ansi_up": "^5.1.0",
     "archiver": "^5.3.0",
     "bull": "4.2.0",
     "delivery": "0.0.6",

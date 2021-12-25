@@ -12,11 +12,16 @@ import {
 import { Job } from 'bull';
 import { spawn } from 'child_process';
 import { SocketService } from '../socket/socket.service';
+import {
+  default as AnsiUp
+} from 'ansi_up';
 
 @Processor('collectionQue')
 export class CollectionConsumer {
 
   private job: Job;
+  private ansi_up = new AnsiUp();
+
   constructor(private socketService: SocketService) { }
 
   @Process('collection-launcher')
@@ -35,7 +40,7 @@ export class CollectionConsumer {
     ps.stdout.on('data', async (data) => {
       await job.log(data.toString());
       this.socketService.socket.emit('EVENT_NAME', {
-        msg: data.toString(),
+        msg: this.ansi_up.ansi_to_html(data.toString()),
       });
     });
 
@@ -43,14 +48,14 @@ export class CollectionConsumer {
       console.error('Failed to start subprocess.', err);
       await job.log('Failed to start subprocess.' + err.toString());
       this.socketService.socket.emit('EVENT_NAME', {
-        msg: err.toString(),
+        msg: this.ansi_up.ansi_to_html(err.toString()),
       });
+      await this.job.moveToFailed({message: 'bbbbb'});
     });
     ps.stderr.on('data', async (data) => {
       console.error(`grep stderr: ${data}`);
-      await job.log(`grep stderr: ${data}`);
       this.socketService.socket.emit('EVENT_NAME', {
-        msg: `${data}`,
+        msg: this.ansi_up.ansi_to_html(`${data}`),
       });
     });
 
@@ -85,6 +90,7 @@ export class CollectionConsumer {
       });
     }
     console.log(msg);
+    await this.job.moveToFailed({message: 'bbbbb'});
     await process.exit(1);
   }
 

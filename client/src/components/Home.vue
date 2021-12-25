@@ -12,6 +12,19 @@
             <th scope="col">Actions</th>
           </tr>
         </thead>
+        <tbody>
+          <tr v-for="job in listjobs" v-bind:key="job.id">
+            
+            <td>{{job.id}}</td>
+            <td>{{job.name}}</td>
+            <td>{{ getDateToshwo(job.processedOn) }}</td>
+            <td>{{ getDateToshwo(job.finishedOn) }}</td>
+            <td>{{job.returnValue}}</td>
+            <td> 
+              <button class="btn-sm btn-outline-success mx-2" ><b-icon-skip-forward-circle/> Show Logs</button>     
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -28,10 +41,17 @@ export default {
     mounted() {
         getData('api/collection/jobs',{
             success: (response) => {
-               console.log(response) 
+              console.log(response)
+               this.listjobs = response.data; 
             },
             swal: this.$swal
         })      
+    },
+    methods: {
+      getDateToshwo(timestamp) {
+        const date = new Date(timestamp);
+       return date.toLocaleDateString()+" "+date.toLocaleTimeString()
+      }
     }
 }
 </script>

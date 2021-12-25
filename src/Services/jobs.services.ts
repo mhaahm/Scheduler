@@ -14,9 +14,6 @@ export class JobsService {
       'failed',
       'waiting',
     ]);
-    
-    console.log(this.queue.getCompleted());
-    console.log(this.queue.getFailed());
     return jobs;
   }
 }

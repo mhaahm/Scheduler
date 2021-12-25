@@ -78,15 +78,19 @@ export class CrontabService {
     // get all crontabs
     // for each crontab job create crontab instance
     const crontabs = await this.crontabRepository.find();
-    //console.log(crontabs);
+    console.log(crontabs);
     crontabs.forEach((crontab) => {
       const collectionId = crontab.id;
       const name = crontab.name;
       const config = crontab.config;
       let cron_config = `00 ${config.minute} ${config.hour} ${config.day_month} ${config.month} ${config.day_week}`;
-      if (config.free_config != '') {
+      if (
+        typeof config.free_config !== 'undefined' &&
+        config.free_config !== ''
+      ) {
         cron_config = config.free_config;
       }
+      console.log(config.free_config);
       const job = new CronJob(cron_config, () => {
         this.collectionProducer.addJobToLaunch(collectionId);
       });
