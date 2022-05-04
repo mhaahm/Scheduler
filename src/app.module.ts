@@ -52,8 +52,8 @@ import { JobsService } from './Services/jobs.services';
     BullModule.registerQueue({
       name: 'collectionQue',
       settings: {
-        lockDuration:  90000, // Key expiration time for job locks.
-        lockRenewTime: 45000, // Interval on which to acquire the job lock
+        lockDuration:  90000,
+        lockRenewTime: 45000, 
         stalledInterval: 30000, // How often check for stalled jobs (use 0 for never checking).
         maxStalledCount:  1, // Max amount of times a stalled job will be re-processed.
         guardInterval: 5000, // Poll interval for delayed jobs and added jobs.

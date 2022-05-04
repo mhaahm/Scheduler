@@ -89,8 +89,8 @@ export class CollectionConsumer {
         msg: msg,
       });
     }
-    console.log(msg);
-    await this.job.moveToFailed({message: 'bbbbb'});
+    //console.log(msg);
+    //await this.job.moveToFailed({message: 'bbbbb'});
     await process.exit(1);
   }
 

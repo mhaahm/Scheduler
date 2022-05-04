@@ -48,20 +48,23 @@ export class CrontabService {
       free_config: params.free_config,
     };
     crontab.collections = [];
-    for (let i = 0; i < params.jobsid.length; i++) {
+   // console.log(params);
+    for (let i = 0; i < params.collections.length; i++) {
       const collection = await this.collectionRepository.findOne(
-        params.jobsid[i],
+        params.collections[i].id,
         {
           relations: ['collector', 'transfertMode'],
         },
       );
+  
       crontab.collections.push(collection);
     }
-
+    
     //console.log(params)
-    const cron = this.crontabRepository.create(crontab);
+    const cron = await this.crontabRepository.create(crontab);
     try {
       if (update) {
+        await Object.assign(cron, crontab); 
         await this.crontabRepository.update(crontab.id, cron);
       } else {
         await this.crontabRepository.save(cron);
@@ -78,7 +81,6 @@ export class CrontabService {
     // get all crontabs
     // for each crontab job create crontab instance
     const crontabs = await this.crontabRepository.find();
-    console.log(crontabs);
     crontabs.forEach((crontab) => {
       const collectionId = crontab.id;
       const name = crontab.name;
@@ -90,7 +92,6 @@ export class CrontabService {
       ) {
         cron_config = config.free_config;
       }
-      console.log(config.free_config);
       const job = new CronJob(cron_config, () => {
         this.collectionProducer.addJobToLaunch(collectionId);
       });
